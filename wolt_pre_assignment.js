@@ -1,4 +1,4 @@
-class Restaurant_Description {
+class Restaurant_Description extends React.Component {
 	constructor(description) {
 		return React.createElement(
 			"em",
@@ -10,9 +10,9 @@ class Restaurant_Description {
 	}
 }
 
-class Restaurant_Delivery_Price {
+class Restaurant_Delivery_Price extends React.Component {
 	constructor(price, currency) {
-		let main_currency = String(price).slice(0, -2);
+		let main_currency = String(price).slice(0, -2); #FIXME
 		let fractional_currency = String(price).slice(-2);
 		if (main_currency === "") {
 			main_currency = "0";
@@ -35,7 +35,7 @@ class Restaurant_Delivery_Price {
 	}
 }
 
-class Restaurant_Info {
+class Restaurant_Info extends React.Component {
 	constructor(props) {
 		return React.createElement(
 			"div",
@@ -48,7 +48,7 @@ class Restaurant_Info {
 	}
 }
 
-class Restaurant_Thumbnail {
+class Restaurant_Thumbnail extends React.Component {
 	constructor(props) {
 		return React.createElement(
 			"img",
@@ -60,7 +60,7 @@ class Restaurant_Thumbnail {
 	}
 }
 
-class Restaurant_Name {
+class Restaurant_Name extends React.Component {
 	constructor(props) {
 		return React.createElement(
 			"div",
@@ -68,6 +68,30 @@ class Restaurant_Name {
 				className: "name"
 			},
 			props.name, new Restaurant_Info(props)
+		);
+	}
+}
+
+class Restaurant_Data extends React.Component {
+	constructor(props) {
+		return React.createElement(
+			"div",
+			{
+				className: "restaurant_data"
+			},
+			props.name, new Restaurant_Info(props)
+		);
+	}
+}
+
+class Restaurant_Data_Container extends React.Component {
+	constructor(props) {
+		return React.createElement(
+			"div",
+			{
+				className: "restaurant_data_container"
+			},
+			new Restaurant_Info(props)
 		);
 	}
 }
@@ -81,7 +105,7 @@ class Restaurant extends React.Component {
 				key: this.props.name.replace(/\s/g, "")
 			},
 			new Restaurant_Thumbnail(this.props),
-			new Restaurant_Name(this.props)
+			new Restaurant_Data_Container(this.props)
 		);
 	}
 }
@@ -99,7 +123,7 @@ function render_restaurants(restaurants) {
 	);
 }
 
-window.onload = function () {
+window.onload = () => {
 	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json",
 		function(data) {
 			restaurants = data.restaurants;

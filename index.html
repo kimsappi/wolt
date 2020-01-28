@@ -10,7 +10,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
 		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-		<script src="wolt_pre_assignment.js"></script>
+		<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
 	</head>
 
 	<body>
@@ -18,11 +18,95 @@
 			<span id="title">
 				<h1>Wolt front-end pre-assignment</h1>
 			</span>
-			<span id="by">By: 
+			<div id="by">By: 
 				<a href="https://github.com/kimsappi">Kim Säppi</a>
-			</span>
+			</div>
+		</div>
+		<div id="options">
+			<div id="offline_filter">
+				Filter closed restaurants:
+				<input type="checkbox" id="offline_checkbox">
+			</div>
 		</div>
 		<div id="restaurants_flex"></div>
+
+
+
+<script type="text/babel">
+class Restaurant extends React.Component {
+	render() {
+		let classnames = this.props.online ? "restaurant" : ("restaurant offline");
+		let delivery_price = delivery_price_to_str(this.props.delivery_price, this.props.currency);
+		return (
+			<div className={classnames}>
+				<img className="thumbnail" src={this.props.image}></img>
+				<div className="restaurant_data_container">
+					<div className="restaurant_data">
+							<div className="restaurant_name">{this.props.name}</div>
+							<div className="restaurant_info">
+									<div className="restaurant_description">{this.props.description}</div>
+									<div className="delivery_price">{delivery_price}</div>
+								</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+}
+</script>
+
+<script>
+function delivery_price_to_str(price, currency) {
+	let decimal_separator = "."
+	let main_currency = String(price).slice(0, -2);
+	let fractional_currency = String(price).slice(-2);
+	if (main_currency === "") {
+		main_currency = "0";
+	}
+	if (fractional_currency.length === 1) {
+		fractional_currency = "0" + fractional_currency;
+	}
+
+	if (currency === "EUR") {
+		currency = "€";
+		decimal_separator = ","
+	}
+	return main_currency + decimal_separator + fractional_currency + " " + currency
+}
+
+function render_restaurants(restaurants) {
+	let restaurants_rendered = [];
+	for (let restaurant of restaurants) {
+		restaurants_rendered.push(
+			React.createElement(Restaurant, restaurant)
+		);
+	}
+	ReactDOM.render(
+		restaurants_rendered,
+		$("#restaurants_flex")[0]
+	);
+}
+
+function filter_offline() {
+	if ($("#offline_checkbox")[0].checked) {
+		$(".offline").css("display", "none");
+	}
+	else {
+		$(".offline").css("display", "block");
+	}
+}
+
+window.onload = () => {
+	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json",
+		(data) => {
+			let restaurants = data.restaurants;
+			render_restaurants(restaurants);
+		}
+	);
+	$("#offline_checkbox")[0].addEventListener("change", filter_offline);
+};
+
+</script>
 	</body>
 
 </html>
