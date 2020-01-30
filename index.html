@@ -188,6 +188,7 @@ window.onload = () => {
 	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json",
 		(data) => {
 			window.restaurants = data.restaurants;
+			sort_restaurants();
 			render_restaurants();
 		}
 	);
