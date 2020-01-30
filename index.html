@@ -22,12 +22,7 @@
 				<a href="https://github.com/kimsappi">Kim Säppi</a>
 			</div>
 		</div>
-		<div id="options">
-			<div id="offline_filter">
-				Filter closed restaurants:
-				<input type="checkbox" id="offline_checkbox">
-			</div>
-		</div>
+		<div id="options"></div>
 		<div id="restaurants_flex"></div>
 
 
@@ -35,8 +30,8 @@
 <script type="text/babel">
 class Restaurant extends React.Component {
 	render() {
-		let classnames = this.props.online ? "restaurant" : ("restaurant offline");
-		let delivery_price = delivery_price_to_str(this.props.delivery_price, this.props.currency);
+		const classnames = this.props.online ? "restaurant" : ("restaurant offline");
+		const delivery_price = delivery_price_to_str(this.props.delivery_price, this.props.currency);
 		return (
 			<div className={classnames}>
 				<img className="thumbnail" src={this.props.image}></img>
@@ -53,9 +48,41 @@ class Restaurant extends React.Component {
 		);
 	}
 }
-</script>
 
-<script>
+class Sorting_Method extends React.Component {
+	render () {
+		return (
+			<option>{this.props.name}</option>
+		)
+	}
+}
+
+class Options extends React.Component {
+	render() {
+		let sorting_methods_rendered = [];
+		for (let sorting_method of sorting_methods) {
+			sorting_methods_rendered.push(
+				React.createElement(Sorting_Method, sorting_method)
+			);
+		}
+
+		return (
+			<React.Fragment>
+				<div id="sorting">
+					Sort by:
+					<select id="sort_by" defaultValue={sorting_methods[0].name}>
+						{sorting_methods_rendered}
+					</select>
+				</div>
+				<div id="offline_filter">
+					List only restaurants that accept orders:
+					<input type="checkbox" id="offline_checkbox"/>
+				</div>
+			</React.Fragment>
+		);
+	}
+}
+
 function delivery_price_to_str(price, currency) {
 	let decimal_separator = "."
 	let main_currency = String(price).slice(0, -2);
@@ -74,9 +101,9 @@ function delivery_price_to_str(price, currency) {
 	return main_currency + decimal_separator + fractional_currency + " " + currency
 }
 
-function render_restaurants(restaurants) {
-	let restaurants_rendered = [];
-	for (let restaurant of restaurants) {
+function render_restaurants() {
+	const restaurants_rendered = [];
+	for (const restaurant of window.restaurants) {
 		restaurants_rendered.push(
 			React.createElement(Restaurant, restaurant)
 		);
@@ -96,14 +123,80 @@ function filter_offline() {
 	}
 }
 
+function sort_restaurants() {
+	let sort_by = $("#sort_by").find(":selected").text();
+	let sort_by_object = null;
+
+	for (let sorting_method of sorting_methods) {
+		if (sort_by === sorting_method.name) {
+			sort_by_object = sorting_method;
+		}
+	}
+	if (sort_by_object != null) {
+		switch(sort_by_object.class) {
+
+			case sorting_method_classes.ALPHA:
+				window.restaurants.sort((a, b) => (a.name > b.name) ? 1 : -1);
+				break;
+
+			case sorting_method_classes.DELIVERY_PRICE:
+				window.restaurants.sort((a, b) => (a.delivery_price > b.delivery_price) ? 1 : -1);
+				break;
+
+		}
+		if (!sort_by_object.ascending) {
+			window.restaurants.reverse();
+		}
+	}
+	render_restaurants();
+}
+
+const sorting_method_classes = {
+	ALPHA: 1,
+	DELIVERY_PRICE: 2
+}
+
+/*
+**	name: Name of sorting method
+**	class: Sorting basis (see const sorting_method_classes)
+**	ascending: If this method should sort objects in ascending order, set to true
+*/
+const sorting_methods = [
+	{
+		name: "A-Z",
+		class: sorting_method_classes.ALPHA,
+		ascending: true
+	},
+	{
+		name: "Z-A",
+		class: sorting_method_classes.ALPHA,
+		ascending: false
+	},
+	{
+		name: "Delivery price (0-9)",
+		class: sorting_method_classes.DELIVERY_PRICE,
+		ascending: true
+	},
+	{
+		name: "Delivery price (9-0)",
+		class: sorting_method_classes.DELIVERY_PRICE,
+		ascending: false
+	}
+]
+
 window.onload = () => {
 	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json",
 		(data) => {
-			let restaurants = data.restaurants;
-			render_restaurants(restaurants);
+			window.restaurants = data.restaurants;
+			render_restaurants();
 		}
 	);
+	ReactDOM.render(
+		<Options />,
+		$("#options")[0]
+	);
 	$("#offline_checkbox")[0].addEventListener("change", filter_offline);
+	$("#sort_by")[0].addEventListener("change", sort_restaurants);
 };
 
 </script>
