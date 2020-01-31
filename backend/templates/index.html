@@ -5,24 +5,40 @@
 		<title>Wolt backend pre-assignment tester</title>
 	</head>
 	<body>
-		<form action="/restaurants/search" method="GET">
-			<div>Search string:
-				<input type="text" name="q">
-			</div>
-			<div>Latitude (-90.0 (S) .. 90.0 (N) degrees):
-				<input type="text" name="lat">
-			</div>
-			<div>Longtitude (-180.0 (W) .. 180.0 (E) degrees):
-				<input type="text" name="lon">
-			</div>
-			<div>
-				<input type="submit" value="Submit">
-			</div>
-		</form>
-
-		<h2 id="results_title">Results:</h2>
-		<div>
-
+		<div>Search string:
+			<input type="text" id="q" value="pizza">
 		</div>
+		<div>Latitude (-90.0 (S) .. 90.0 (N) degrees):
+			<input type="text" id="lat" value="60.17">
+		</div>
+		<div>Longtitude (-180.0 (W) .. 180.0 (E) degrees):
+			<input type="text" id="lon" value="24.94">
+		</div>
+		<div>
+			<input type="button" value="Submit" onclick="send_query();">
+		</div>
+
+		<h2 id="results_title"></h2>
+		<div>
+			<pre id="results"></pre>
+		</div>
+
+	<script>
+		function send_query() {
+			let params = "q=" + document.getElementById("q").value +
+				"&lat=" + document.getElementById("lat").value +
+				"&lon=" + document.getElementById("lon").value
+			let xhr = new XMLHttpRequest();
+			xhr.open("GET", "/restaurants/search?"+params);
+			xhr.onload = (event) => {
+				document.getElementById("results_title").innerHTML = "Results (see console for nicer output)";
+				document.getElementById("results").innerHTML =
+					JSON.stringify(JSON.parse(event.target.response), null, 2);
+				console.log(JSON.parse(event.target.response));
+			}
+			xhr.send();
+		}
+	</script>
+
 	</body>
 </html>

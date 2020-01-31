@@ -3,8 +3,6 @@ import json
 from typing import List
 from math import radians, sin, cos, acos
 
-import sys
-
 """ Configuration data """
 RADIUS_EARTH = 6371
 MAX_DISTANCE = 3
@@ -21,10 +19,8 @@ def check_distance(coordinates: List[float], lat: float, lon: float) -> bool:
 
 	distance = RADIUS_EARTH * acos(
 		sin(lat) * sin(r_lat) +
-		cos(lat) * cos(r_lat) * (cos(lon) - cos(r_lon))
+		cos(lat) * cos(r_lat) * cos(lon - r_lon)
 		)
-
-	print(distance, file=sys.stderr)
 
 	if distance < MAX_DISTANCE:
 		return True
@@ -39,7 +35,7 @@ def check_query(restaurant: dict, query: str) -> bool:
 	if query in restaurant["name"].lower() or\
 		query in restaurant["description"].lower():
 		return True
-	
+
 	else:
 		for tag in restaurant["tags"]:
 			if query in tag.lower():
@@ -66,18 +62,22 @@ def index():
 	return render_template("index.html")
 
 
-@app.route("/restaurants/search", methods=["GET"])
+@app.route("/restaurants/search", methods=["GET", "POST"])
 def restaurant_search():
 	try: # Validating input data
-		query = str(request.args.get("q"))
-		lat = float(request.args.get("lat"))
-		lon = float(request.args.get("lon"))
-	except ValueError:
+		if request.method == "GET":
+			data = request.args
+		else:
+			data = request.form
+		query = str(data.get("q"))
+		lat = float(data.get("lat"))
+		lon = float(data.get("lon"))
+	except:
 		return jsonify("Invalid input")
 	
 	if len(query) < QUERY_MIN_LENGTH:
 		return jsonify(
-			f"Search query too short (minimum {QUERY_MIN_LENGTH} character{int(bool(QUERY_MIN_LENGTH - 1))}"
+			f"Search query too short (minimum {QUERY_MIN_LENGTH} character{int(bool(QUERY_MIN_LENGTH - 1)) * 's'})"
 			)
 
 	# No DB allowed
@@ -93,4 +93,4 @@ def restaurant_search():
 
 
 if __name__ == "__main__":
-	app.run()
+	app.run(host="0.0.0.0")
