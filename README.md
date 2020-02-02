@@ -37,7 +37,9 @@ Queries are possible with both `GET` and `POST` requests.
 
 ### Option 1: Web interface
 Go to either `http://localhost:5000` (Docker, possibly Flask) or `http://0.0.0.0:5000` (Flask) and you should be presented with an interface like this:
+
 ![User interface](/images/interface.png)
+
 This allows you to enter the search string and coordinates for the query. The query response is rendered below as well as in the browser console.
 
 ### Option 2: Browser URL insertion, curl, etc.
