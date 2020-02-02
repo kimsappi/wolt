@@ -1,5 +1,5 @@
 # About
-Pre-assignment for Wolt summer 2020 internships. It was only required to complete either the front-end or back-end assignment, but I did both to facilitate learning.
+Pre-assignment for Wolt summer 2020 internships. It was only required to complete either the front-end or back-end assignment, but I did both to facilitate learning. The main front-end interface is not connected to the back-end in any way, since the scope was slightly different.
 
 # Back-end
 The back-end assignment was to make an API that returns a list of restaurant objects matching a query string and located less than 3 km from the query coordinates. Restaurant data was given as a JSON file and we were instructed not to use any kind of database.
@@ -27,3 +27,26 @@ docker build -t wolt:flask .
 docker run --rm -p 5000:5000 wolt:flask
 ```
 
+## Querying the API
+The API requires 3 parameters:
+* *q*: Search string to be searched for in the restaurant's name, description and tags (case insensitive).
+* *lat*: Latitude of the location to be searched around in degrees.
+* *lon*: Longtitude of the location to be searched around in degrees.
+
+Queries are possible with both `GET` and `POST` requests.
+
+### Option 1: Web interface
+Go to either `http://localhost:5000` (Docker, possibly Flask) or `http://0.0.0.0:5000` (Flask) and you should be presented with an interface like this:
+![User interface](/images/interface.png)
+This allows you to enter the search string and coordinates for the query. The query response is rendered below as well as in the browser console.
+
+### Option 2: Browser URL insertion, curl, etc.
+The API responds to queries at `$URL/restaurants/search`. You can perform `GET` requests by entering the URL in the following command into your browser or using curl:
+```shell
+curl 'http://localhost:5000/restaurants/search?q=classic&lat=60.17&lon=24.94'
+```
+And `POST` requests with the following command:
+```shell
+curl -d 'q=classic&lat=60.17&lon=24.94' http://localhost:5000/restaurants/search
+```
+While the API is case insensitive, it is MIME type sensitive, so stick to -d (`application/x-www-form-urlencoded`).
