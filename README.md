@@ -29,9 +29,9 @@ docker run --rm -p 5000:5000 wolt:flask
 
 ## Querying the API
 The API requires 3 parameters:
-* *q*: Search string to be searched for in the restaurant's name, description and tags (case insensitive).
-* *lat*: Latitude of the location to be searched around in degrees.
-* *lon*: Longtitude of the location to be searched around in degrees.
+* *q* (string): Search string to be searched for in the restaurant's name, description and tags (case insensitive). *Minimum length 1 character per the assignment, empty string considered invalid.*
+* *lat* (float): Latitude of the location to be searched around in degrees.
+* *lon* (float): Longtitude of the location to be searched around in degrees.
 
 Queries are possible with both `GET` and `POST` requests.
 
@@ -52,3 +52,18 @@ And `POST` requests with the following command:
 curl -d 'q=classic&lat=60.17&lon=24.94' http://localhost:5000/restaurants/search
 ```
 While the API is case insensitive, it is MIME type sensitive, so stick to -d (`application/x-www-form-urlencoded`).
+
+# Front-end
+The goal was to display 50 restaurants defined as JSON objects, with ascending and descending sort functionality.
+
+My implementation is a React-based web front-end. React was a recommendation by Wolt, although the assignment would have been possible to complete without it. I didn't feel the project necessitated using a CSS framework, so i completed it without one.
+
+## Dependencies
+* React & ReactDOM
+* Babel (JSX)
+* jQuery
+
+## Using the implementation
+All dependencies are included and there's no transpilation necessary. Thus running the project is easy:
+1. `git clone https://github.com/kimsappi/wolt.git wolt`
+2. Open wolt/frontend/index.html in your favourite browser.
