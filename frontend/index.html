@@ -28,6 +28,9 @@
 
 
 <script type="text/babel">
+/*
+** Giant class for displaying a single restaurant's data
+*/
 class Restaurant extends React.Component {
 	render() {
 		const classnames = this.props.online ? "restaurant" : ("restaurant offline");
@@ -57,6 +60,9 @@ class Sorting_Method extends React.Component {
 	}
 }
 
+/*
+** Block for display of sorting and offline toggle options
+*/
 class Options extends React.Component {
 	render() {
 		let sorting_methods_rendered = [];
@@ -114,6 +120,9 @@ function render_restaurants() {
 	);
 }
 
+/*
+** Toggles display of offline restaurants.
+*/
 function filter_offline() {
 	if ($("#offline_checkbox")[0].checked) {
 		$(".offline").css("display", "none");
@@ -133,6 +142,8 @@ function sort_restaurants() {
 		}
 	}
 	if (sort_by_object != null) {
+		// "Easily" extensible way to add more sorting methods.
+		// Restaurants should be sorted in ascending order by default.
 		switch(sort_by_object.class) {
 
 			case sorting_method_classes.ALPHA:
@@ -144,6 +155,8 @@ function sort_restaurants() {
 				break;
 
 		}
+		// Restaurants should always be sorted in ascending order above,
+		//	this will reverse them if order should be descending.
 		if (!sort_by_object.ascending) {
 			window.restaurants.reverse();
 		}
@@ -192,6 +205,9 @@ window.onload = () => {
 			render_restaurants();
 		}
 	);
+
+	// This isn't really required, but I wanted to explore React further
+	// Renders the "Sort by" dropdown
 	ReactDOM.render(
 		<Options />,
 		$("#options")[0]
