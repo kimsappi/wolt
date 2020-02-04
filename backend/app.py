@@ -1,9 +1,11 @@
 import json
 import logging
+import requests
 from math import acos, cos, radians, sin
 from typing import List
 
 from flask import Flask, jsonify, render_template, request
+#import blurhash
 
 """ Configuration data """
 RADIUS_EARTH = 6371
@@ -12,7 +14,7 @@ QUERY_MIN_LENGTH = 1
 
 app = Flask(__name__)
 
-logging.basicConfig(filename="wolt.log",
+logging.basicConfig(#filename="wolt.log",
 					level=logging.DEBUG,
 					format="%(levelname)s: %(asctime)s %(message)s")
 
@@ -51,6 +53,21 @@ def check_query(restaurant: dict, query: str) -> bool:
 		return False
 
 
+#def validate_blurhash(restaurant: dict) -> None:
+#	""" Logs warning if stored blurhash doesn't match calculated one """
+#	try:
+#		image = requests.get(restaurant["image"], stream=True)
+#	except:
+#		logging.warning(f"Couldn't get image for {restaurant['name']}, {restaurant['city']}")
+#		return None
+#	hash = blurhash.encode(image.raw, x_components=4, y_components=3)
+#	if restaurant["blurhash"] != hash:
+#		logging.warning(
+#			f"""Blurhashes for {restaurant['name']}, {restaurant['city']} don't match.
+#			Stored blurhash: {restaurant['blurhash']}\nEncoded blurhash: {hash}"""
+#			)
+
+
 def get_valid_restaurants(restaurants: List[dict],
 							query: str,
 							lat: float,
@@ -62,6 +79,7 @@ def get_valid_restaurants(restaurants: List[dict],
 		try:
 			if check_distance(restaurant["location"], lat, lon) and\
 				check_query(restaurant, query):
+				validate_blurhash(restaurant)
 				valid_restaurants.append(restaurant)
 		except:
 			logging.exception(f"Checking location and query string: {restaurant}")
