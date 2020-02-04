@@ -1,7 +1,9 @@
-from flask import Flask, jsonify, request, render_template
 import json
+import logging
+from math import acos, cos, radians, sin
 from typing import List
-from math import radians, sin, cos, acos
+
+from flask import Flask, jsonify, render_template, request
 
 """ Configuration data """
 RADIUS_EARTH = 6371
@@ -10,13 +12,19 @@ QUERY_MIN_LENGTH = 1
 
 app = Flask(__name__)
 
+logging.basicConfig(filename="wolt.log",
+					level=logging.DEBUG,
+					format="%(levelname)s: %(asctime)s %(message)s")
+
 def check_distance(coordinates: List[float], lat: float, lon: float) -> bool:
 	""" Check that the restaurant is within the search radius """
+	# Converting degrees to radians
 	lat, lon, r_lat, r_lon = map(
 		radians,
 		[lat, lon, coordinates[1], coordinates[0]]
 		)
 
+	# Great circle distance
 	distance = RADIUS_EARTH * acos(
 		sin(lat) * sin(r_lat) +
 		cos(lat) * cos(r_lat) * cos(lon - r_lon)
@@ -51,9 +59,12 @@ def get_valid_restaurants(restaurants: List[dict],
 	valid_restaurants = []
 
 	for restaurant in restaurants:
-		if check_distance(restaurant["location"], lat, lon) and\
-			check_query(restaurant, query):
-			valid_restaurants.append(restaurant)
+		try:
+			if check_distance(restaurant["location"], lat, lon) and\
+				check_query(restaurant, query):
+				valid_restaurants.append(restaurant)
+		except:
+			logging.exception(f"Checking location and query string: {restaurant}")
 
 	return valid_restaurants
 
@@ -73,6 +84,7 @@ def restaurant_search():
 		lat = float(data.get("lat"))
 		lon = float(data.get("lon"))
 	except:
+		logging.exception(f"Invalid query: {data}")
 		return jsonify("Invalid input")
 	
 	if len(query) < QUERY_MIN_LENGTH:
@@ -80,11 +92,12 @@ def restaurant_search():
 			f"Search query too short (minimum {QUERY_MIN_LENGTH} character{int(bool(QUERY_MIN_LENGTH - 1)) * 's'})"
 			)
 
-	# No DB allowed
+	# No DB allowed per the assignment
 	try:
 		with open ("restaurants.json") as f:
 			restaurants_list = json.load(f)["restaurants"]
 	except:
+		logging.exception("Couldn't get restaurants:")
 		return jsonify("Couldn't get restaurants")
 
 	restaurants = get_valid_restaurants(restaurants_list, query, lat, lon)
