@@ -16,7 +16,7 @@ logging.basicConfig(filename="wolt.log",
 					level=logging.DEBUG,
 					format="%(levelname)s: %(asctime)s %(message)s")
 
-def check_distance(coordinates: List[float], lat: float, lon: float) -> bool:
+def check_distance(coordinates: List[float], lon: float, lat: float) -> bool:
 	""" Check that the restaurant is within the search radius """
 	# Converting degrees to radians
 	lat, lon, r_lat, r_lon = map(
@@ -60,7 +60,7 @@ def get_valid_restaurants(restaurants: List[dict],
 
 	for restaurant in restaurants:
 		try:
-			if check_distance(restaurant["location"], lat, lon) and\
+			if check_distance(restaurant["location"], lon=lon, lat=lat) and\
 				check_query(restaurant, query):
 				valid_restaurants.append(restaurant)
 		except:
