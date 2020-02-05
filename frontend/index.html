@@ -8,8 +8,8 @@
 		<link href="styles.css" rel="stylesheet" type="text/css">
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
-		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+		<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
 		<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
 	</head>
 
@@ -40,11 +40,11 @@ class Restaurant extends React.Component {
 				<img className="thumbnail" src={this.props.image}></img>
 				<div className="restaurant_data_container">
 					<div className="restaurant_data">
-							<div className="restaurant_name">{this.props.name}</div>
-							<div className="restaurant_info">
-									<div className="restaurant_description">{this.props.description}</div>
-									<div className="delivery_price">Delivery: {delivery_price}</div>
-								</div>
+						<div className="restaurant_name">{this.props.name}</div>
+						<div className="restaurant_info">
+								<div className="restaurant_description">{this.props.description}</div>
+								<div className="delivery_price">Delivery: {delivery_price}</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -176,12 +176,12 @@ const sorting_method_classes = {
 */
 const sorting_methods = [
 	{
-		name: "A-Z",
+		name: "Name A-Z",
 		class: sorting_method_classes.ALPHA,
 		ascending: true
 	},
 	{
-		name: "Z-A",
+		name: "Name Z-A",
 		class: sorting_method_classes.ALPHA,
 		ascending: false
 	},
@@ -198,13 +198,18 @@ const sorting_methods = [
 ]
 
 window.onload = () => {
-	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json",
-		(data) => {
+	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json")
+		.done((data) => {
 			window.restaurants = data.restaurants;
 			sort_restaurants();
 			render_restaurants();
-		}
-	);
+		})
+		.fail(() => {
+			ReactDOM.render(
+				<p>Couldn't load restaurant data</p>,
+				$("#restaurants_flex")[0]
+			)
+		});
 
 	// This isn't really required, but I wanted to explore React further
 	// Renders the "Sort by" dropdown
