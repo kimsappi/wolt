@@ -80,9 +80,13 @@ def restaurant_search():
 			data = request.args
 		else:
 			data = request.form
-		query = str(data.get("q"))
 		lat = float(data.get("lat"))
 		lon = float(data.get("lon"))
+		query = data.get("q")
+		if query is None:
+			raise KeyError
+		else:
+			query = str(query)
 	except:
 		logging.exception(f"Invalid query: {data}")
 		return jsonify("Invalid input")
