@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Wolt front-end pre-assignment</title>
+
+		<link href="{{ url_for("static", filename="styles.css") }}" rel="stylesheet" type="text/css">
+		<link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+		<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+		<script src="{{ url_for("static", filename="sorting_methods.js") }}"></script>
+		<script src="{{ url_for("static", filename="react_classes.js") }}" type="text/babel"></script>
+		<script src="{{ url_for("static", filename="wolt_pre_assignment.js") }}" type="text/babel"></script>
+
+	</head>
+
+	<body>
+		<div id="header" class="general_flex">
+			<span id="title">
+				<h1>Wolt front-end pre-assignment</h1>
+			</span>
+			<div id="by">By: 
+				<a href="https://github.com/kimsappi">Kim Säppi</a>
+			</div>
+		</div>
+		<div id="options" class="general_flex"></div>
+		<div id="restaurants_flex"></div>
+	</body>
+
+</html>

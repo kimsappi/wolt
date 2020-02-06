@@ -1,6 +1,7 @@
 import json
 import logging
 from math import acos, cos, radians, sin
+import os
 from typing import List
 
 from flask import Flask, jsonify, render_template, request
@@ -15,6 +16,10 @@ app = Flask(__name__)
 logging.basicConfig(filename="wolt.log",
 					level=logging.DEBUG,
 					format="%(levelname)s: %(asctime)s %(message)s")
+
+@app.route("/frontend", methods=["GET"])
+def frontend():
+    return render_template("frontend.html")
 
 def check_distance(coordinates: List[float], lon: float, lat: float) -> bool:
 	""" Check that the restaurant is within the search radius """
@@ -80,9 +85,13 @@ def restaurant_search():
 			data = request.args
 		else:
 			data = request.form
-		query = str(data.get("q"))
 		lat = float(data.get("lat"))
 		lon = float(data.get("lon"))
+		query = data.get("q")
+		if query is None:
+			raise KeyError
+		else:
+			query = str(query)
 	except:
 		logging.exception(f"Invalid query: {data}")
 		return jsonify("Invalid input")
@@ -106,4 +115,4 @@ def restaurant_search():
 
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=5000)
+	app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 8080)))
