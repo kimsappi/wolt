@@ -9,6 +9,9 @@ I decided to implement the API with Python Flask. Flask includes a built-in web 
 ## Running the server
 There are 2 ways to run the API: Python and Docker. These instructions are for *NIX systems, other operating systems are available.
 
+### Option 0: Pre-deployed (limited time)
+The API is available for a limited time at https://gcr-vr4fnhk7fa-uc.a.run.app/
+
 ### Option 1: Python
 Requires Python 3 to be installed (e.g. `sudo apt-get install python3`).
 ```shell
@@ -36,7 +39,7 @@ The API requires 3 parameters:
 Queries are possible with both `GET` and `POST` requests.
 
 ### Option 1: Web interface
-Go to either `http://localhost:5000` (Docker, possibly Flask) or `http://0.0.0.0:5000` (Flask) and you should be presented with an interface like this:
+Go to either http://localhost:5000 (Docker, possibly Flask) or http://0.0.0.0:5000 (Flask) and you should be presented with an interface like this:
 
 ![User interface](/images/interface.png)
 
@@ -66,6 +69,9 @@ My implementation is a React-based web front-end. React was a recommendation by 
 ## Using the implementation
 All dependencies are included and there's no transpilation necessary. Thus running the project is easy. There are a few options:
 
+### Option 0: Pre-deployed (limited time)
+The front-end solution is available for a limited time at https://gcr-vr4fnhk7fa-uc.a.run.app/frontend
+
 ### Option 1: Easy
 1. `git clone https://github.com/kimsappi/wolt.git wolt`
 2. Open `wolt/frontend/index_safe.html` in your favourite browser. `index_safe.html` is a messy file, but one that can be run successfully without a web server.
@@ -73,4 +79,4 @@ All dependencies are included and there's no transpilation necessary. Thus runni
 ### Option 2: Harder
 1. `git clone https://github.com/kimsappi/wolt.git wolt`
 2. `cd wolt/frontend`
-3. Open a web server (e.g. `python -m SimpleHTTPServer`) and navigate to the front page (e.g. `http://localhost:8000`)
+3. Open a web server (e.g. `python -m SimpleHTTPServer`) and navigate to the front page (e.g. http://localhost:8000)
