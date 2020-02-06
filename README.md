@@ -64,6 +64,13 @@ My implementation is a React-based web front-end. React was a recommendation by 
 * jQuery
 
 ## Using the implementation
-All dependencies are included and there's no transpilation necessary. Thus running the project is easy:
+All dependencies are included and there's no transpilation necessary. Thus running the project is easy. There are a few options:
+
+### Option 1: Easy
 1. `git clone https://github.com/kimsappi/wolt.git wolt`
-2. Open wolt/frontend/index.html in your favourite browser.
+2. Open `wolt/frontend/index_safe.html` in your favourite browser. `index_safe.html` is a messy file, but one that can be run successfully without a web server.
+
+### Option 2: Harder
+1. `git clone https://github.com/kimsappi/wolt.git wolt`
+2. `cd wolt/frontend`
+3. Open a web server (e.g. `python -m SimpleHTTPServer`) and navigate to the front page (e.g. `http://localhost:8000`)

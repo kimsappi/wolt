@@ -1,118 +1,24 @@
-class Restaurant_Description extends React.Component {
-	constructor(description) {
-		return React.createElement(
-			"em",
-			{
-				className: "description"
-			},
-			description
-		);
+function delivery_price_to_str(price, currency) {
+	let decimal_separator = "."
+	let main_currency = String(price).slice(0, -2);
+	let fractional_currency = String(price).slice(-2);
+	if (main_currency === "") {
+		main_currency = "0";
 	}
+	if (fractional_currency.length === 1) {
+		fractional_currency = "0" + fractional_currency;
+	}
+
+	if (currency === "EUR") {
+		currency = "€";
+		decimal_separator = ","
+	}
+	return main_currency + decimal_separator + fractional_currency + " " + currency
 }
 
-class Restaurant_Delivery_Price extends React.Component {
-	constructor(price, currency) {
-		let main_currency = String(price).slice(0, -2); #FIXME
-		let fractional_currency = String(price).slice(-2);
-		if (main_currency === "") {
-			main_currency = "0";
-		}
-		if (fractional_currency.length === 1) {
-			fractional_currency = "0" + fractional_currency;
-		}
-
-		if (currency === "EUR") {
-			currency = "€";
-		}
-
-		return React.createElement(
-			"div",
-			{
-				className: "delivery_price"
-			},
-			"Delivery price: " + main_currency + '.' + fractional_currency + ' ' + currency
-		);
-	}
-}
-
-class Restaurant_Info extends React.Component {
-	constructor(props) {
-		return React.createElement(
-			"div",
-			{
-				className: "restaurant_info"
-			},
-			new Restaurant_Description(props.description),
-			new Restaurant_Delivery_Price(props.delivery_price, props.currency)
-		);
-	}
-}
-
-class Restaurant_Thumbnail extends React.Component {
-	constructor(props) {
-		return React.createElement(
-			"img",
-			{
-				src: props.image,
-				className: "thumbnail"
-			}
-		);
-	}
-}
-
-class Restaurant_Name extends React.Component {
-	constructor(props) {
-		return React.createElement(
-			"div",
-			{
-				className: "name"
-			},
-			props.name, new Restaurant_Info(props)
-		);
-	}
-}
-
-class Restaurant_Data extends React.Component {
-	constructor(props) {
-		return React.createElement(
-			"div",
-			{
-				className: "restaurant_data"
-			},
-			props.name, new Restaurant_Info(props)
-		);
-	}
-}
-
-class Restaurant_Data_Container extends React.Component {
-	constructor(props) {
-		return React.createElement(
-			"div",
-			{
-				className: "restaurant_data_container"
-			},
-			new Restaurant_Info(props)
-		);
-	}
-}
-
-class Restaurant extends React.Component {
-	render() {
-		return React.createElement(
-			"div",
-			{
-				className: "restaurant" + " online" + String(this.props.online),
-				key: this.props.name.replace(/\s/g, "")
-			},
-			new Restaurant_Thumbnail(this.props),
-			new Restaurant_Data_Container(this.props)
-		);
-	}
-}
-
-function render_restaurants(restaurants) {
-	let restaurants_rendered = [];
-	for (let restaurant of restaurants) {
+function render_restaurants() {
+	const restaurants_rendered = [];
+	for (const restaurant of window.restaurants) {
 		restaurants_rendered.push(
 			React.createElement(Restaurant, restaurant)
 		);
@@ -123,11 +29,72 @@ function render_restaurants(restaurants) {
 	);
 }
 
-window.onload = () => {
-	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json",
-		function(data) {
-			restaurants = data.restaurants;
-			render_restaurants(restaurants);
+/*
+** Toggles display of offline restaurants.
+*/
+function filter_offline() {
+	if ($("#offline_checkbox")[0].checked) {
+		$(".offline").css("display", "none");
+	}
+	else {
+		$(".offline").css("display", "block");
+	}
+}
+
+function sort_restaurants() {
+	let sort_by = $("#sort_by").find(":selected").text();
+	let sort_by_object = null;
+
+	for (let sorting_method of sorting_methods) {
+		if (sort_by === sorting_method.name) {
+			sort_by_object = sorting_method;
 		}
+	}
+	if (sort_by_object != null) {
+		// "Easily" extensible way to add more sorting methods.
+		// Restaurants should be sorted in ascending order by default.
+		switch(sort_by_object.class) {
+
+			case sorting_method_classes.ALPHA:
+				window.restaurants.sort((a, b) => (a.name > b.name) ? 1 : -1);
+				break;
+
+			case sorting_method_classes.DELIVERY_PRICE:
+				window.restaurants.sort((a, b) => (a.delivery_price > b.delivery_price) ? 1 : -1);
+				break;
+
+		}
+		// Restaurants should always be sorted in ascending order above,
+		//	this will reverse them if order should be descending.
+		if (!sort_by_object.ascending) {
+			window.restaurants.reverse();
+		}
+	}
+	render_restaurants();
+}
+
+function onload_init() {
+	$.getJSON("https://raw.githubusercontent.com/woltapp/summer2020/master/restaurants.json")
+		.done((data) => {
+			window.restaurants = data.restaurants;
+			sort_restaurants();
+			render_restaurants();
+		})
+		.fail(() => {
+			ReactDOM.render(
+				<p>Couldn't load restaurant data</p>,
+				$("#restaurants_flex")[0]
+			)
+		});
+
+	// This isn't really required, but I wanted to explore React further
+	// Renders the "Sort by" dropdown
+	ReactDOM.render(
+		<Options />,
+		$("#options")[0]
 	);
+	$("#offline_checkbox")[0].addEventListener("change", filter_offline);
+	$("#sort_by")[0].addEventListener("change", sort_restaurants);
 };
+
+$(document).ready(() => { onload_init(); });
