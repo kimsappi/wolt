@@ -6,6 +6,7 @@
 		<title>Wolt front-end pre-assignment</title>
 
 		<link href="styles.css" rel="stylesheet" type="text/css">
+		<link href='https://fonts.googleapis.com/css?family=Source Sans Pro' rel='stylesheet'>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
@@ -14,7 +15,7 @@
 	</head>
 
 	<body>
-		<div id="header">
+		<div id="header" class="general_flex">
 			<span id="title">
 				<h1>Wolt front-end pre-assignment</h1>
 			</span>
@@ -22,7 +23,7 @@
 				<a href="https://github.com/kimsappi">Kim Säppi</a>
 			</div>
 		</div>
-		<div id="options"></div>
+		<div id="options" class="general_flex"></div>
 		<div id="restaurants_flex"></div>
 
 
@@ -81,8 +82,10 @@ class Options extends React.Component {
 					</select>
 				</div>
 				<div id="offline_filter">
-					List only restaurants that accept orders:
 					<input type="checkbox" id="offline_checkbox"/>
+					<label for="offline_checkbox">
+						Only show restaurants that currently accept orders
+					</label>
 				</div>
 			</React.Fragment>
 		);
