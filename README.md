@@ -59,7 +59,7 @@ While the API is case insensitive, it is MIME type sensitive, so stick to -d (`a
 # Front-end
 The goal was to display 50 restaurants defined as JSON objects, with ascending and descending sort functionality.
 
-My implementation is a React-based web front-end. React was a recommendation by Wolt, although the assignment would have been possible to complete without it. I didn't feel the project necessitated using a CSS framework, so i completed it without one.
+My implementation is a React-based web front-end. React was a recommendation by Wolt, although the assignment would have been possible to complete without it. I didn't feel the project necessitated using a CSS framework, so I completed it without one.
 
 ## Dependencies
 * React & ReactDOM
